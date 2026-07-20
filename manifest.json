@@ -1,0 +1,17 @@
+{
+  "name": "Photos",
+  "short_name": "Photos",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "iPhone-style gallery with albums, favourites and a time scrubber",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23111'/%3E%3Ccircle cx='256' cy='256' r='170' fill='%23ff9f0a'/%3E%3Ccircle cx='256' cy='256' r='75' fill='%23fff'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

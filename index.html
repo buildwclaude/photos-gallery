@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Photos</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ff9f0a'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css?v=8">
+</head>
+<body>
+  <div id="app">
+
+    <!-- LIBRARY -->
+    <main id="view-library" class="view active">
+      <header class="view-header">
+        <h1>Library</h1>
+        <div class="header-actions">
+          <button id="lib-zoom" class="hbtn" aria-label="Zoom grid">⊞</button>
+          <button class="hbtn select-toggle">Select</button>
+        </div>
+      </header>
+      <div id="library-scroll" class="scroll-area">
+        <div id="library-content"></div>
+        <div class="scroll-spacer"></div>
+      </div>
+      <div id="scrubber"></div>
+      <div id="lib-seg" class="segmented">
+        <button data-mode="years">Years</button>
+        <button data-mode="months">Months</button>
+        <button data-mode="all" class="on">All Photos</button>
+      </div>
+    </main>
+
+    <!-- ALBUMS -->
+    <main id="view-albums" class="view">
+      <header class="view-header"><h1>Albums</h1></header>
+      <div class="scroll-area">
+        <div id="albums-content"></div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </main>
+
+    <!-- FAVOURITES -->
+    <main id="view-favourites" class="view">
+      <header class="view-header">
+        <h1>Favourites</h1>
+        <div class="header-actions"><button class="hbtn select-toggle">Select</button></div>
+      </header>
+      <div class="scroll-area">
+        <div id="fav-grid" class="grid"></div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </main>
+
+    <!-- SEARCH -->
+    <main id="view-search" class="view">
+      <header class="view-header"><h1>Search</h1></header>
+      <div class="search-box">
+        <input id="search-input" type="search" placeholder="Photos, videos, albums, months…" autocomplete="off">
+      </div>
+      <div class="scroll-area">
+        <div id="search-results"><p class="empty">Search by month, year, album, “video”…</p></div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </main>
+
+    <!-- DETAIL (album / videos / trash / hidden) -->
+    <main id="view-detail" class="view detail">
+      <header class="view-header compact">
+        <button id="detail-back" class="hbtn back-btn">‹ Back</button>
+        <div class="detail-titles">
+          <h1 id="detail-title"></h1>
+          <p id="detail-sub"></p>
+        </div>
+        <div class="header-actions"><button class="hbtn select-toggle">Select</button></div>
+      </header>
+      <div class="scroll-area">
+        <div id="detail-grid" class="grid"></div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </main>
+
+    <!-- TAB BAR -->
+    <nav id="tabbar">
+      <button class="tab on" data-tab="library"><span class="ti">🖼</span>Library</button>
+      <button class="tab" data-tab="albums"><span class="ti">🗂</span>Albums</button>
+      <button class="tab" data-tab="favourites"><span class="ti">♥</span>Favourites</button>
+      <button class="tab" data-tab="search"><span class="ti">🔍</span>Search</button>
+    </nav>
+
+    <!-- SELECT ACTION BAR -->
+    <div id="select-bar">
+      <button id="sel-share" class="sbtn">⇪</button>
+      <span id="sel-count">Select items</span>
+      <div class="sel-actions">
+        <button id="sel-fav" class="sbtn">♥</button>
+        <button id="sel-restore" class="sbtn">Restore</button>
+        <button id="sel-del" class="sbtn danger">🗑</button>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+  </div>
+
+  <script src="js/data.js?v=8"></script>
+  <script src="js/haptics.js?v=8"></script>
+  <script src="js/scrubber.js?v=8"></script>
+  <script src="js/viewer.js?v=8"></script>
+  <script src="js/app.js?v=8"></script>
+</body>
+</html>

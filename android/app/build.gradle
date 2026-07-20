@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+
+def keystoreFile = rootProject.file('../signing/release.jks')
+
+android {
+    namespace 'com.buildwclaude.photos'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.buildwclaude.photos"
+        minSdk 29
+        targetSdk 35
+        versionCode Integer.parseInt(System.getenv('VERSION_CODE') ?: '1')
+        versionName System.getenv('VERSION_NAME') ?: '1.0'
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreFile.exists()) {
+                storeFile keystoreFile
+                storePassword 'gallery-pass'
+                keyAlias 'gallery'
+                keyPassword 'gallery-pass'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keystoreFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+}
+
+// bundle the web app (repo root) into the APK's assets as www/
+tasks.register('copyWebAssets', Copy) {
+    from(rootProject.file('..')) {
+        include 'index.html', 'manifest.json', 'css/**', 'js/**'
+    }
+    into layout.buildDirectory.dir('webassets/www')
+}
+android.sourceSets.main.assets.srcDirs += layout.buildDirectory.dir('webassets')
+preBuild.dependsOn copyWebAssets
