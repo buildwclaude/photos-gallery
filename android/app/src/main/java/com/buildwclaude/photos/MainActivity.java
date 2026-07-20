@@ -49,10 +49,16 @@ public class MainActivity extends Activity {
     }
 
     private boolean hasPerm() {
-        for (String p : perms()) {
-            if (checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED) return false;
+        // Android 14+ "partial access": user picked specific photos — that
+        // grants READ_MEDIA_VISUAL_USER_SELECTED and MediaStore returns them
+        if (Build.VERSION.SDK_INT >= 34 && checkSelfPermission(
+                "android.permission.READ_MEDIA_VISUAL_USER_SELECTED") == PackageManager.PERMISSION_GRANTED) {
+            return true;
         }
-        return true;
+        for (String p : perms()) {
+            if (checkSelfPermission(p) == PackageManager.PERMISSION_GRANTED) return true;
+        }
+        return false;
     }
 
     @Override
@@ -81,13 +87,37 @@ public class MainActivity extends Activity {
             public WebResourceResponse shouldInterceptRequest(@NonNull WebView view, @NonNull WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
             }
+
+            @Override
+            public void onReceivedError(@NonNull WebView view, @NonNull WebResourceRequest request,
+                                        @NonNull androidx.webkit.WebResourceErrorCompat error) {
+                if (request.isForMainFrame()) {
+                    String detail = "";
+                    try {
+                        if (androidx.webkit.WebViewFeature.isFeatureSupported(
+                                androidx.webkit.WebViewFeature.WEB_RESOURCE_ERROR_GET_DESCRIPTION)) {
+                            detail = String.valueOf(error.getDescription());
+                        }
+                    } catch (Exception ignored) { }
+                    showError("Load error", request.getUrl().toString(), detail);
+                }
+            }
+
+            @Override
+            public void onReceivedHttpError(@NonNull WebView view, @NonNull WebResourceRequest request,
+                                            @NonNull WebResourceResponse errorResponse) {
+                if (request.isForMainFrame()) {
+                    showError("HTTP " + errorResponse.getStatusCode(), request.getUrl().toString(), "");
+                }
+            }
         });
 
         web.addJavascriptInterface(new Bridge(), "NativeGallery");
 
-        if (hasPerm()) {
-            load();
-        } else {
+        // load immediately so the screen is never an empty black void;
+        // the permission dialog (if needed) appears on top of the app
+        load();
+        if (!hasPerm()) {
             requestPermissions(perms(), REQ_MEDIA);
         }
     }
@@ -96,11 +126,19 @@ public class MainActivity extends Activity {
         web.loadUrl(APP_URL);
     }
 
+    private void showError(String title, String url, String detail) {
+        String html = "<html><body style=\"background:#000;color:#ff6b6b;font-family:monospace;padding:40px 18px\">"
+                + "<h3 style=\"color:#fff\">" + title + "</h3>"
+                + "<p style=\"word-break:break-all\">" + url + "</p>"
+                + "<p>" + detail + "</p>"
+                + "<p style=\"color:#888\">Screenshot this and send it to Claude.</p></body></html>";
+        runOnUiThread(() -> web.loadDataWithBaseURL(null, html, "text/html", "utf-8", null));
+    }
+
     @Override
     public void onRequestPermissionsResult(int code, @NonNull String[] p, @NonNull int[] res) {
-        // load either way — the web side shows a "grant access" banner when denied
-        if (web.getUrl() == null) load();
-        else web.reload();
+        // reload once access is granted so real photos replace the demo set
+        if (hasPerm()) web.reload();
     }
 
     @Override

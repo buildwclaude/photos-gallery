@@ -10,7 +10,18 @@
   <title>Photos</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ff9f0a'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23fff'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="css/styles.css?v=8">
+  <link rel="stylesheet" href="css/styles.css?v=9">
+  <script>
+    // boot-failure trap: surface any startup crash on screen instead of a blank page
+    window.addEventListener('error', function (e) {
+      if (document.getElementById('app') && document.querySelector('.cell')) return; // app already up
+      var d = document.createElement('pre');
+      d.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#000;color:#ff6b6b;padding:44px 16px;font:12px/1.5 monospace;white-space:pre-wrap;overflow:auto;margin:0';
+      d.textContent = 'App failed to start:\n\n' + (e.message || e.type) + '\n' + (e.filename || '') + ':' + (e.lineno || '') +
+        '\n\nScreenshot this and send it to Claude.';
+      document.body ? document.body.appendChild(d) : addEventListener('DOMContentLoaded', function(){ document.body.appendChild(d); });
+    }, true);
+  </script>
 </head>
 <body>
   <div id="app">
@@ -107,10 +118,10 @@
     <div id="toast"></div>
   </div>
 
-  <script src="js/data.js?v=8"></script>
-  <script src="js/haptics.js?v=8"></script>
-  <script src="js/scrubber.js?v=8"></script>
-  <script src="js/viewer.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
+  <script src="js/data.js?v=9"></script>
+  <script src="js/haptics.js?v=9"></script>
+  <script src="js/scrubber.js?v=9"></script>
+  <script src="js/viewer.js?v=9"></script>
+  <script src="js/app.js?v=9"></script>
 </body>
 </html>
